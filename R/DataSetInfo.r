@@ -1,4 +1,5 @@
 DataSetInfo <- setClass(
+  # Set the name for the class
   "DataSetInfo",
 
   # Define the slots
@@ -10,10 +11,10 @@ DataSetInfo <- setClass(
   ),
 
   prototype=list(
-    host="geom",
-    port="",
-    user="",
-    password=""
+    spatialColumn="geom",
+    timeColumn="",
+    dataColumn="",
+    objectIdColumn=""
   )
 
 )
