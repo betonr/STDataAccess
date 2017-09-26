@@ -30,9 +30,13 @@ setMethod (f = "getTrajectory", signature = "Translator",
              objectIdColumn = object@dataSetInfo@objectIdColumn
 
              filteredData = rawData[rawData[[objectIdColumn]] == objectId,]
+             if(length(filteredData) == 0){
+               stop('object id not found');
+             }
 
              #pegando o crs concatenado
              crs = CRS(filteredData@proj4string@projargs)
+
              #criando lista com as coordenas
              datxy <- data.frame(x=filteredData$coords.x1,y=filteredData$coords.x2)
              xy <- coordinates(datxy)
@@ -50,6 +54,31 @@ setMethod (f = "getTrajectory", signature = "Translator",
              track <- Track(stidf)
 
              return (track)
+           }
+)
+
+# method getTrajectories
+setGeneric (name="getTrajectories",
+            def = function (object, layer, objectId) {
+              standardGeneric("getTrajectories")
+            }
+)
+
+setMethod (f = "getTrajectories", signature = "Translator",
+           definition = function (object, layer) {
+
+             #realiza o carregamento dos pacotes
+             loadPackages();
+
+             rawData = loadData(object@adapter, layer=layer)
+
+             trackList <- list()
+             tracksList <- list()
+
+             if(length(rawData)>=1 && rawData!="Fail"){
+
+             }
+
            }
 )
 
