@@ -3,22 +3,17 @@ FileDataSourceInfo <- setClass(
 
   # Define the slots
   slots = c(
-    path="character",
-    type="character"
+    path="character"
   ),
 
   prototype = list(
-    path= NA_character_,
-    type= NA_character_
+    path= NA_character_
   ),
 
   # validate the slots
   validity = function(object) {
 
     if (object@path == ""){
-      return("If source type is File, you must provide a file path (path)")
-    }
-    if (object@type == ""){
       return("If source type is File, you must provide a file path (path)")
     }
 

@@ -7,14 +7,16 @@ DataSetInfo <- setClass(
     spatialColumn="character",
     timeColumn="character",
     dataColumn="character",
-    objectIdColumn="character"
+    objectIdColumn="character",
+    trajIdColumn="character"
   ),
 
   prototype=list(
     spatialColumn="geom",
     timeColumn="",
     dataColumn="",
-    objectIdColumn=""
+    objectIdColumn="",
+    trajIdColumn=""
   )
 
 )

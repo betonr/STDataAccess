@@ -8,8 +8,7 @@ DBMSDataSourceInfo <- setClass(
     username="character",
     password="character",
     dbname="character",
-    encoding="character",
-    type="character"
+    encoding="character"
   ),
 
   prototype=list(

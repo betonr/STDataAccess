@@ -11,27 +11,29 @@ Translator <- setClass(
 
 # method getTrajectory
 setGeneric (name="getTrajectory",
-            def = function (object, layer, objectId) {
+            def = function (object, layer, objectId, trajectoryId) {
               standardGeneric("getTrajectory")
             }
 )
 
 setMethod (f = "getTrajectory", signature = "Translator",
-           definition = function (object, layer, objectId) {
+           definition = function (object, layer, objectId, trajectoryId) {
 
              #realiza o carregamento dos pacotes
              loadPackages();
 
              rawData = loadData(object@adapter, layer=layer)
 
-             spatialColumn = object@dataSetInfo@spatialColumn
              timeColumn = object@dataSetInfo@timeColumn
              dataColumn = object@dataSetInfo@dataColumn
              objectIdColumn = object@dataSetInfo@objectIdColumn
+             trajIdColumn = object@dataSetInfo@trajIdColumn
 
              filteredData = rawData[rawData[[objectIdColumn]] == objectId,]
+             filteredData = filteredData[filteredData[[trajIdColumn]] == trajectoryId,]
+
              if(length(filteredData) == 0){
-               stop('object id not found');
+               stop('trajectory id not found');
              }
 
              #pegando o crs concatenado
@@ -65,54 +67,36 @@ setGeneric (name="getTrajectories",
 )
 
 setMethod (f = "getTrajectories", signature = "Translator",
-           definition = function (object, layer) {
+           definition = function (object, layer, objectId) {
 
              #realiza o carregamento dos pacotes
              loadPackages();
 
              rawData = loadData(object@adapter, layer=layer)
 
-             trackList <- list()
-             tracksList <- list()
-
-             if(length(rawData)>=1 && rawData!="Fail"){
-
-             }
-
-           }
-)
-
-# method getCoverage
-setGeneric (name="getCoverage",
-            def = function (object, layer, timeframe) {
-              standardGeneric("getCoverage")
-            }
-)
-
-setMethod (f = "getCoverage", signature = "Translator",
-           definition = function (object, layer, timeframe) {
-
-             #realiza o carregamento dos pacotes
-             loadPackages();
-
-             rawData = loadData(object@adapter, layer = layer)
-
-             spatialColumn = object@dataSetInfo@spatialColumn
              timeColumn = object@dataSetInfo@timeColumn
              dataColumn = object@dataSetInfo@dataColumn
+             objectIdColumn = object@dataSetInfo@objectIdColumn
+             trajIdColumn = object@dataSetInfo@trajIdColumn
 
-             filteredData = rawData[rawData[[timeColumn]] == timeframe,]
+             filteredData = rawData[rawData[[objectIdColumn]] == objectId,]
 
-             spValues <- SpatialPoints(filteredData@coords)
+             trackList <- c()
 
-             timeValues = xts( 1:length(spValues),as.POSIXct(filteredData[[timeColumn]]))
+             if (length(filteredData)>=1){
+               trajId <- 0
+               counter = 1;
 
-             IDs = paste("ID",1:length(spValues))
-             dataValues = filteredData[[dataColumn]]
-             dataValues = data.frame(values = dataValues, ID=IDs)
+               for(i in 1:length(filteredData)){
+                 if(trajId != filteredData[[trajIdColumn]][i]){
+                   trajId = filteredData[[trajIdColumn]][i]
+                   track <- getTrajectory(object, layer=layer, objectId = objectId, trajectoryId=trajId)
 
-             stidf <- STIDF (spValues, timeValues, dataValues)
+                   trackList <- c(track, trackList)
+                 }
+               }
 
-             return (stidf)
+              return(Tracks(trackList))
+             }
            }
 )
