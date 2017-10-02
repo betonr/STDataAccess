@@ -85,18 +85,58 @@ setMethod (f = "getTrajectories", signature = "Translator",
 
              if (length(filteredData)>=1){
                trajId <- 0
-               counter = 1;
 
                for(i in 1:length(filteredData)){
                  if(trajId != filteredData[[trajIdColumn]][i]){
                    trajId = filteredData[[trajIdColumn]][i]
                    track <- getTrajectory(object, layer=layer, objectId = objectId, trajectoryId=trajId)
 
-                   trackList <- c(track, trackList)
+                   trackList <- c(trackList, track)
                  }
                }
 
-              return(Tracks(trackList))
+               return(Tracks(trackList))
+             }
+           }
+)
+
+# method getTrackCollections
+setGeneric (name="getTrackCollections",
+            def = function (object, layer) {
+              standardGeneric("getTrackCollections")
+            }
+)
+
+setMethod (f = "getTrackCollections", signature = "Translator",
+           definition = function (object, layer) {
+
+             #realiza o carregamento dos pacotes
+             loadPackages();
+
+             rawData = loadData(object@adapter, layer=layer)
+
+             timeColumn = object@dataSetInfo@timeColumn
+             dataColumn = object@dataSetInfo@dataColumn
+             objectIdColumn = object@dataSetInfo@objectIdColumn
+             trajIdColumn = object@dataSetInfo@trajIdColumn
+
+             tracksList <- c()
+
+             rawData <- rawData[order(rawData[[objectIdColumn]]),]
+             if (length(rawData)>=1){
+               objId <- 0
+
+               for(i in 1:length(rawData)){
+                 if(objId != rawData[[objectIdColumn]][i]){
+                   objId = rawData[[objectIdColumn]][i]
+                   tracks <- getTrajectories(object, layer=layer, objectId = objId)
+
+                   tracksList <- c(tracksList, tracks)
+                 }
+               }
+
+                return(TracksCollection(tracksList))
+
              }
            }
 )
