@@ -30,7 +30,9 @@ setMethod (f = "getTrajectory", signature = "Translator",
              trajIdColumn = object@dataSetInfo@trajIdColumn
 
              filteredData = rawData[rawData[[objectIdColumn]] == objectId,]
-             filteredData = filteredData[filteredData[[trajIdColumn]] == trajectoryId,]
+             if(!is.null(trajectoryId)){
+               filteredData = filteredData[filteredData[[trajIdColumn]] == trajectoryId,]
+             }
 
              if(length(filteredData) == 0){
                stop('trajectory id not found');
@@ -48,11 +50,14 @@ setMethod (f = "getTrajectory", signature = "Translator",
              timeValues = xts( 1:length(spValues),as.POSIXct(filteredData[[timeColumn]]))
 
              IDs = paste("ID",1:length(spValues))
-             dataValues = filteredData[[dataColumn]]
+             dataValues = c(1:length(spValues))
+
+             if(dataColumn!="" && !is.null(dataColumn)){
+               dataValues = filteredData[[dataColumn]]
+             }
              dataValues = data.frame(values = dataValues, ID=IDs)
 
-             stidf <- STIDF (spValues, timeValues, dataValues)
-
+             stidf <- STIDF(spValues, timeValues, dataValues)
              track <- Track(stidf)
 
              return (track)
@@ -82,28 +87,32 @@ setMethod (f = "getTrajectories", signature = "Translator",
              filteredData = rawData[rawData[[objectIdColumn]] == objectId,]
 
              trackList <- c()
+             if(!is.null(trajIdColumn) && trajIdColumn!=""){
+               if (length(filteredData)>=1){
+                 ids = unique(filteredData[[trajIdColumn]])
+                 for(i in 1:length(ids)){
+                     trajId = ids[[i]][1]
+                     track <- getTrajectory(object, layer=layer, objectId=objectId, trajectoryId=trajId)
 
-             if (length(filteredData)>=1){
-               trajId <- 0
+                     trackList <- c(trackList, track)
 
-               for(i in 1:length(filteredData)){
-                 if(trajId != filteredData[[trajIdColumn]][i]){
-                   trajId = filteredData[[trajIdColumn]][i]
-                   track <- getTrajectory(object, layer=layer, objectId = objectId, trajectoryId=trajId)
-
-                   trackList <- c(trackList, track)
                  }
+                 return(Tracks(trackList))
                }
 
+             }else{
+               track <- getTrajectory(object, layer=layer, objectId=objectId, trajectoryId=NULL);
+               trackList <- c(trackList, track);
                return(Tracks(trackList))
              }
+
            }
 )
 
-# method getTrackCollections
+# method getTrackCollection
 setGeneric (name="getTrackCollection",
             def = function (object, layer) {
-              standardGeneric("getTrackCollections")
+              standardGeneric("getTrackCollection")
             }
 )
 
@@ -121,22 +130,22 @@ setMethod (f = "getTrackCollection", signature = "Translator",
              trajIdColumn = object@dataSetInfo@trajIdColumn
 
              tracksList <- c()
-
-             rawData <- rawData[order(rawData[[objectIdColumn]]),]
-             if (length(rawData)>=1){
-               objId <- 0
-
-               for(i in 1:length(rawData)){
-                 if(objId != rawData[[objectIdColumn]][i]){
-                   objId = rawData[[objectIdColumn]][i]
-                   tracks <- getTrajectories(object, layer=layer, objectId = objId)
+             if(!is.null(objectIdColumn) && objectIdColumn!=""){
+               if (length(rawData)>=1){
+                 ids = unique(rawData[[objectIdColumn]])
+                 for(i in 1:length(ids)){
+                   objId = ids[[i]][1]
+                   tracks <- getTrajectories(object, layer=layer, objectId=objId)
 
                    tracksList <- c(tracksList, tracks)
                  }
+
+                 return(TracksCollection(tracksList))
                }
 
-                return(TracksCollection(tracksList))
-
+             }else{
+               stop('objectIdColumn is necessary into dataSetInfo');
              }
+
            }
 )
