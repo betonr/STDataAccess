@@ -8,7 +8,11 @@
  - translator <- Translator(adapter = adapter, dataSetInfo = datasetinfo)
 
 ## functions:
- - trajectories:
+ - TRAJECTORY:
    - track <- getTrajectory(translator, "argo_profiles_geom", 1901204, 45737)
    - tracks <- getTrajectories(translator, "argo_profiles_geom", 1901204)
    - tracksCollection <- getTrackCollections(translator, layer="argo_profiles_geom")
+
+ - COVERAGE: 
+ 
+ - TIME SERIES:
