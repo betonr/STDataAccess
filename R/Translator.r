@@ -101,13 +101,13 @@ setMethod (f = "getTrajectories", signature = "Translator",
 )
 
 # method getTrackCollections
-setGeneric (name="getTrackCollections",
+setGeneric (name="getTrackCollection",
             def = function (object, layer) {
               standardGeneric("getTrackCollections")
             }
 )
 
-setMethod (f = "getTrackCollections", signature = "Translator",
+setMethod (f = "getTrackCollection", signature = "Translator",
            definition = function (object, layer) {
 
              #realiza o carregamento dos pacotes
