@@ -11,7 +11,7 @@
  - TRAJECTORY:
    - track <- getTrajectory(translator, "argo_profiles_geom", 1901204, 45737)
    - tracks <- getTrajectories(translator, "argo_profiles_geom", 1901204)
-   - tracksCollection <- getTrackCollections(translator, layer="argo_profiles_geom")
+   - tracksCollection <- getTrackCollection(translator, layer="argo_profiles_geom")
 
  - COVERAGE: 
  
