@@ -4,7 +4,8 @@ Translator <- setClass(
   # Define the attributes
   slots = c(
     adapter = "Adapter",
-    dataSetInfo = "DataSetInfo"
+    dataSetInfo = "DataSetInfo",
+    dataStore = "SpatialPointsDataFrame"
   )
 
 )
@@ -22,7 +23,10 @@ setMethod (f = "getTrajectory", signature = "Translator",
              #realiza o carregamento dos pacotes
              loadPackages();
 
-             rawData = loadData(object@adapter, layer=layer)
+             if(length(object@dataStore@data) == 0){
+               object@dataStore <- loadData(object@adapter, layer=layer)
+             }
+             rawData <- object@dataStore
 
              timeColumn = object@dataSetInfo@timeColumn
              dataColumn = object@dataSetInfo@dataColumn
@@ -77,7 +81,10 @@ setMethod (f = "getTrajectories", signature = "Translator",
              #realiza o carregamento dos pacotes
              loadPackages();
 
-             rawData = loadData(object@adapter, layer=layer)
+             if(length(object@dataStore@data) == 0){
+               object@dataStore <- loadData(object@adapter, layer=layer)
+             }
+             rawData <- object@dataStore
 
              timeColumn = object@dataSetInfo@timeColumn
              dataColumn = object@dataSetInfo@dataColumn
@@ -122,7 +129,10 @@ setMethod (f = "getTrackCollection", signature = "Translator",
              #realiza o carregamento dos pacotes
              loadPackages();
 
-             rawData = loadData(object@adapter, layer=layer)
+             if(length(object@dataStore@data) == 0){
+               object@dataStore <- loadData(object@adapter, layer=layer)
+             }
+             rawData <- object@dataStore
 
              timeColumn = object@dataSetInfo@timeColumn
              dataColumn = object@dataSetInfo@dataColumn
